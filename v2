@@ -1,0 +1,24 @@
+def main():
+    path = ""
+    special = 'o'
+    alpha = set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z'])
+    characters = 'grivly'
+    for letter in characters + special:
+        alpha.remove(letter)
+    alpha = list(alpha)
+    answer = []
+    with open(path, "r") as word_list:
+        words = [s.rstrip('\n') for s in word_list.readlines()]
+        answer = []
+        for word in words:
+            valid = True
+            if special in word:
+                for letter in word:
+                    if letter in alpha:
+                        valid = False
+                if valid and len(word) >= 4:
+                    answer.append(word)
+    print(answer)
+                        
+            
+main()
