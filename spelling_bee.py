@@ -1,25 +1,22 @@
-from itertools import product
+import json
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+import re
 
-def generate_permutations(characters, length):
-    return [''.join(p) for p in product(characters, repeat=length)]
+def scrape_site():
+    url = "https://www.nytimes.com/puzzles/spelling-bee"
+    page = urlopen(url)
+    html_bytes = page.read()
+    html = html_bytes.decode("utf-8")
+    soup = BeautifulSoup(html, "html.parser")
+    script_tag = soup.find('script', string=lambda t: 'window.gameData' in t)
+    json_str = script_tag.string.split(' = ', 1)[1].rstrip(';')
+    game_data = json.loads(json_str)
+    today_data = game_data['today']
+    return today_data['answers']
 
 def main():
-    path = "/Users/aadhav/uni/projects/wordlist.10000"
-    special = 'o'
-    characters = 'grivly'
-    permutations = set()
-    for i in range(3,6):
-        perms = generate_permutations(characters, i)
-        for perm in perms:
-            for j in range(i):
-                permutations.add(perm[:j] + special + perm[j:])
-    answer = []
-    with open(path, "r") as word_list:
-        words = [s.rstrip('\n') for s in word_list.readlines()]
-        for word in list(permutations):
-            if word in words:
-                answer.append(word)
-        
-    print(answer)
-
+    answers = scrape_site()
+    answers = sorted(answers,key=len) 
+    print(answers[::-1])
 main()
